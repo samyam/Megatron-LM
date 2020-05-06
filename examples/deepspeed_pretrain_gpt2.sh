@@ -50,13 +50,14 @@ gpt_options=" \
         --train-iters 500000 \
         --lr-decay-iters 320000 \
         --save $CHECKPOINT_PATH \
+        --load $CHECKPOINT_PATH \
         --data-path $DATA_PATH \
         --vocab-file data/gpt2-vocab.json \
         --merge-file data/gpt2-merges.txt \
         --data-impl mmap \
         --eval-iters 200 \
         --log-interval 10 \
-        --save-interval 10000 \
+        --save-interval 5000 \
         --eval-interval 5000 \
         --split 949,50,1 \
         --distributed-backend nccl \
