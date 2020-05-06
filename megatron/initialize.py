@@ -27,6 +27,23 @@ from megatron import get_tensorboard_writer
 from megatron import mpu
 from megatron.global_vars import set_global_variables
 
+def setup_deepspeed_random_and_activation_checkpointing(args):
+
+    import deepspeed
+    num_layers = args.num_layers // args.checkpoint_num_layers
+    num_layers = num_layers if args.num_layers % args.checkpoint_num_layers == 0 else num_layers + 1
+
+    deepspeed.checkpointing.configure(mpu,
+                        partition_activations=args.partition_activations,
+                        contigious_checkpointing=args.contigious_checkpointing,
+                        nlayers=num_layers,
+                        checkpoint_in_cpu=args.checkpoint_in_cpu,
+                        synchronize=args.synchronize_each_layer,
+                        profile_backward=args.profile_backward)
+
+    mpu.checkpoint = deepspeed.checkpointing.checkpoint
+    mpu.get_cuda_rng_tracker = deepspeed.checkpointing.get_cuda_rng_tracker
+    mpu.model_parallel_cuda_manual_seed = deepspeed.checkpointing.model_parallel_cuda_manual_seed
 
 def initialize_megatron(extra_args_provider=None, args_defaults={},
                         ignore_unknown_args=False):
@@ -46,9 +63,15 @@ def initialize_megatron(extra_args_provider=None, args_defaults={},
 
     # Autoresume.
     _init_autoresume()
-
+    
     # Random seeds for reproducibility.
     args = get_args()
+    
+    # Optional, only if you want to use the activation checkpointing from DeepSpeed
+    # Useful for saving memory on large models when MP > 1
+    if args.deepspeed:
+        setup_deepspeed_random_and_activation_checkpointing(args)
+
     if args.rank == 0:
         print('> setting random seeds to {} ...'.format(args.seed))
     _set_random_seed(args.seed)

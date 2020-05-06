@@ -24,7 +24,7 @@ from megatron import mpu
 from megatron import print_rank_0
 from megatron.data.gpt2_dataset import build_train_valid_test_datasets
 from megatron.model import GPT2Model
-from megatron.training import pretrain
+from megatron.deepspeed_training import pretrain
 from megatron.utils import get_ltor_masks_and_position_ids
 from megatron.utils import reduce_losses
 
