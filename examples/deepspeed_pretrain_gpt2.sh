@@ -1,7 +1,5 @@
 #! /bin/bash
 
-# Runs the "345M" parameter model
-
 GPUS_PER_NODE=16
 # Change for multinode config
 MASTER_ADDR=localhost
