@@ -26,7 +26,7 @@ mp_size=4
 #ZeRO Configs
 stage=2
 reduce_scatter=true
-contigious_gradients=true
+contigious_gradients=false
 rbs=200000000
 agbs=5000000000
 
