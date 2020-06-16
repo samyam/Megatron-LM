@@ -19,7 +19,7 @@ script_dir=$(dirname $script_path)
 config_json="$script_dir/ds_zero_stage_2_config.json"
 
 #Megatron Model Parallelism
-mp_size=4
+mp_size=16
 
 #ZeRO Configs
 stage=2
@@ -33,18 +33,18 @@ chkp_layers=1
 PA=true
 PA_CPU=false
 CC=true
-SYNCHRONIZE=false
+SYNCHRONIZE=true
 PROFILE=false
 
 
 gpt_options=" \
         --model-parallel-size ${mp_size} \
-        --num-layers 2 \
-        --hidden-size 512 \
-        --num-attention-heads 16 \
+        --num-layers 125 \
+        --hidden-size 8192 \
+        --num-attention-heads 64 \
         --seq-length 1024 \
         --max-position-embeddings 1024 \
-        --batch-size 8 \
+        --batch-size 32 \
         --train-iters 500000 \
         --lr-decay-iters 320000 \
         --save $CHECKPOINT_PATH \
