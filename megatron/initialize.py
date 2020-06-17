@@ -35,11 +35,11 @@ def setup_deepspeed_random_and_activation_checkpointing(args):
 
     deepspeed.checkpointing.configure(mpu,
                         partition_activations=args.partition_activations,
-                        contigious_checkpointing=args.contigious_checkpointing,
-                        nlayers=num_layers,
+                        contiguous_checkpointing=args.contigious_checkpointing,
+                        num_checkpoints=num_layers,
                         checkpoint_in_cpu=args.checkpoint_in_cpu,
                         synchronize=args.synchronize_each_layer,
-                        profile_backward=args.profile_backward)
+                        profile=args.profile_backward)
 
     mpu.checkpoint = deepspeed.checkpointing.checkpoint
     mpu.get_cuda_rng_tracker = deepspeed.checkpointing.get_cuda_rng_tracker

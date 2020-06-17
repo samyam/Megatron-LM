@@ -4,28 +4,28 @@ GPUS_PER_NODE=16
 # Change for multinode config
 MASTER_ADDR=localhost
 MASTER_PORT=6000
-NNODES=1
+NNODES=2
 NODE_RANK=0
 WORLD_SIZE=$(($GPUS_PER_NODE*$NNODES))
 
-export DLWS_NUM_WORKER=1
+export DLWS_NUM_WORKER=2
 export DLWS_NUM_GPU_PER_WORKER=16
 
 DATA_PATH=data/webtext/webtext_text_document
-CHECKPOINT_PATH=/turing-nfs/users/samyamr/checkpoints/
+CHECKPOINT_PATH=/turing-nfs/users/samyamr/checkpoints/6-16-2020
 
 script_path=$(realpath $0)
 script_dir=$(dirname $script_path)
 config_json="$script_dir/ds_zero_stage_2_config.json"
 
 #Megatron Model Parallelism
-mp_size=16
+mp_size=4
 
 #ZeRO Configs
 stage=2
 reduce_scatter=true
 contigious_gradients=true
-rbs=200000000
+rbs=50000000
 agbs=5000000000
 
 #Actication Checkpointing and Contigious Memory
@@ -39,12 +39,12 @@ PROFILE=false
 
 gpt_options=" \
         --model-parallel-size ${mp_size} \
-        --num-layers 125 \
+        --num-layers 12 \
         --hidden-size 8192 \
         --num-attention-heads 64 \
         --seq-length 1024 \
         --max-position-embeddings 1024 \
-        --batch-size 32 \
+        --batch-size 8 \
         --train-iters 500000 \
         --lr-decay-iters 320000 \
         --save $CHECKPOINT_PATH \
@@ -70,7 +70,6 @@ gpt_options=" \
 "
 
        #Some Old Parameters
-       #  --load $CHECKPOINT_PATH \
        #  --split 900,9,1 \
        #  --hidden-dropout 0.1 \
        #  --attention-dropout 0.1 \
